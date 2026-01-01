@@ -82,7 +82,7 @@ app.post("/", async (request, response) => {
   console.log("result of AI query: ", result.join(''));
 
   response.json({
-    output: result.join(''),
+    output: { content: result.join('')},
   });
   } catch (err) {
     console.log("Error in response from AI: ", err);
