@@ -79,7 +79,7 @@ app.post("/", async (request, response) => {
     { input }
   );
 
-  console.log("result of AI query: ", result);
+  console.log("result of AI query: ", result.join());
 
   response.json({
     output: result.join(),
