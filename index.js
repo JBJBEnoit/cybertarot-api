@@ -69,7 +69,7 @@ app.post("/", async (request, response) => {
                     + "; Future=" + formatCardName(cards[2].name) + (cards[2].inverted ? " inverted" : "");
 
   const input = {
-    prompt: promptString,
+    prompt: promptString + ". Do not add a title or any markdown or HTML formatting, just return the poem in plain text, formatted with newlines for linebreaks.",
     max_length: 500,
     temperature: 0.7,
   }
@@ -82,7 +82,7 @@ app.post("/", async (request, response) => {
   console.log("result of AI query: ", result);
 
   response.json({
-    output: result,
+    output: result.join(),
   });
   } catch (err) {
     console.log("Error in response from AI: ", err);
