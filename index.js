@@ -1,4 +1,4 @@
-import { OpenAI } from "openai";
+import Replicate from "replicate";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -12,9 +12,8 @@ const port = process.env.PORT;
 app.use(bodyParser.json());
 app.use(cors());
 
-const openai = new OpenAI({
-  organization: process.env.OPEN_AI_ORG,
-    apiKey: process.env.OPEN_AI_KEY
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_KEY
 });
 
 function formatCardName(name) {
@@ -69,18 +68,18 @@ app.post("/", async (request, response) => {
                     + "; Present=" + formatCardName(cards[1].name) + (cards[1].inverted ? " inverted" : "")
                     + "; Future=" + formatCardName(cards[2].name) + (cards[2].inverted ? " inverted" : "");
 
-  const result = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-          role: "user",
-          content: promptString 
-      }
-    ],
-  });
+  const input = {
+    prompt: promptString,
+    max_length: 500,
+    temperature: 0.7,
+  }
+  const result = await replicate.run(
+    "qwen/qwen3-235b-a22b-instruct-2507",
+    { input }
+  );
 
   response.json({
-    output: result.choices[0].message,
+    output: result,
   });
 
 });
