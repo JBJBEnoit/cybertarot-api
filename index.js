@@ -73,14 +73,23 @@ app.post("/", async (request, response) => {
     max_length: 500,
     temperature: 0.7,
   }
+  try {
   const result = await replicate.run(
     "qwen/qwen3-235b-a22b-instruct-2507",
     { input }
   );
 
+  console.log("result of AI query: ", result);
+
   response.json({
     output: result,
   });
+  } catch (err) {
+    console.log("Error in response from AI: ", err);
+    reponse.json({
+      output: err
+    });
+  }
 
 });
 
