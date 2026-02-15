@@ -1,4 +1,3 @@
-import { OpenAI } from "openai";
 import Replicate from "replicate";
 import express from "express";
 import bodyParser from "body-parser";
@@ -12,11 +11,6 @@ const app = express();
 const port = process.env.PORT;
 app.use(bodyParser.json());
 app.use(cors());
-
-const openai = new OpenAI({
-  organization: process.env.OPEN_AI_ORG,
-    apiKey: process.env.OPEN_AI_KEY
-});
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_KEY
@@ -75,18 +69,27 @@ app.post("/", async (request, response) => {
                     + "; Future=" + formatCardName(cards[2].name) + (cards[2].inverted ? " inverted" : "");
 
   const input = {
-    prompt: promptString,
+    prompt: promptString + ". Do not add a title or any markdown or HTML formatting, just return the poem in plain text, formatted with newlines for linebreaks.",
     max_length: 500,
     temperature: 0.7,
   }
+  try {
   const result = await replicate.run(
-    process.env.MODEL_NAME,
+    "qwen/qwen3-235b-a22b-instruct-2507",
     { input }
   );
 
+  console.log("result of AI query: ", result.join(''));
+
   response.json({
-    output: result,
+    output: { content: result.join('')},
   });
+  } catch (err) {
+    console.log("Error in response from AI: ", err);
+    response.json({
+      output: err
+    });
+  }
 
 });
 
