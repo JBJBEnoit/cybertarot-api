@@ -75,7 +75,7 @@ app.post("/", async (request, response) => {
   }
   try {
   const result = await replicate.run(
-    "qwen/qwen3-235b-a22b-instruct-2507",
+    process.env.MODEL_NAME,
     { input }
   );
 
